@@ -5,10 +5,14 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <FrameLayout
+    <LinearLayout
         android:id="@+id/content_frame"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"></FrameLayout>
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+        <include android:id="@+id/content_frame_top_navigation"
+            layout="@layout/top_navigation_layout" />
+    </LinearLayout>
 
     <RelativeLayout
         android:id="@+id/left_drawer"
@@ -16,10 +20,6 @@
         android:layout_height="match_parent"
         android:layout_gravity="left"
         android:background="#90FF91">
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="侧滑菜单"/>
         <FrameLayout
             android:id="@+id/drawer_top_frame"
             android:layout_width="match_parent"
