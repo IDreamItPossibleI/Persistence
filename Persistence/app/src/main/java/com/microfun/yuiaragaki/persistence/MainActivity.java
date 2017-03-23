@@ -3,6 +3,8 @@ package com.microfun.yuiaragaki.persistence;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Build;
+import android.support.annotation.NonNull;
+import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -10,6 +12,7 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
@@ -30,9 +33,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     @BindView(R.id.drawer_layout)
     public DrawerLayout mDrawLayout;
     @BindView(R.id.left_drawer)
-    public RelativeLayout mLeftDrawer;
-    @BindView(R.id.drawer_top_frame)
-    public FrameLayout mTopFrame;
+    public NavigationView mLeftDrawer;
     @BindView(R.id.content_frame_top_navigation)
     public RelativeLayout mTopNavigation;
 
@@ -40,6 +41,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private ActionBarDrawerToggle mDrawerToggle;
     private View mDrawerLeftLogin;
     private View mDrawerLeftunLogin;
+    public ViewGroup mTopFrame;
     //标识是否需要在关闭抽屉后打开新页面
     private boolean isIntent = false;
     private Intent currentIntent = null;
@@ -103,18 +105,20 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             mDrawLayout.setDrawerListener(mDrawerToggle);
             mDrawLayout.setDrawerShadow(R.drawable.drawer_shadow, GravityCompat.START);
 
-            mDrawerLeftLogin = View.inflate(this, R.layout.drawer_left_login_layout, null);
-            TextView tvUsername = (TextView) mDrawerLeftLogin.findViewById(R.id.tv_username);
+            mTopFrame = (ViewGroup) mLeftDrawer.getHeaderView(0);
+            TextView tvUsername = (TextView) mTopFrame.findViewById(R.id.tv_username);
             tvUsername.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-//                    Toast.makeText(MainActivity.this, "测试点击事件", Toast.LENGTH_SHORT).show();
                     Snackbar.make(mDrawLayout, "测试点击事件", Snackbar.LENGTH_SHORT).show();
                     mTopFrame.removeAllViews();
+                    ViewGroup.LayoutParams params = new ViewGroup.LayoutParams(
+                            ViewGroup.LayoutParams.MATCH_PARENT,
+                            ViewGroup.LayoutParams.MATCH_PARENT);
+                    mDrawerLeftunLogin.setLayoutParams(params);
                     mTopFrame.addView(mDrawerLeftunLogin);
                 }
             });
-            mTopFrame.addView(mDrawerLeftLogin);
             mDrawerLeftunLogin = View.inflate(this, R.layout.drawer_left_unlogin_layout, null);
             Button btnLogin = (Button) mDrawerLeftunLogin.findViewById(R.id.btn_login_in);
             btnLogin.setOnClickListener(new View.OnClickListener() {
@@ -125,6 +129,20 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             });
         }
 
+        //添加抽屉点击事件
+        mLeftDrawer.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
+            @Override
+            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+                switch(item.getItemId())
+                {
+                    case R.id.drawer_1:
+                        Snackbar.make(mDrawLayout, "所有阅享", Snackbar.LENGTH_SHORT).show();
+                        break;
+                }
+                //关闭抽屉，跳转其他页面
+                return true;
+            }
+        });
         //添加导航栏事件
         RelativeLayout mRlytNavigationList = (RelativeLayout) mTopNavigation.findViewById(R.id.rlyt_navigation_list);
         mRlytNavigationList.setOnClickListener(this);
