@@ -12,6 +12,8 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.view.KeyEvent;
+import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
@@ -45,6 +47,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     //标识是否需要在关闭抽屉后打开新页面
     private boolean isIntent = false;
     private Intent currentIntent = null;
+    //标识抽屉是否正在关闭
+    private boolean isClosing = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -191,4 +195,54 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 break;
         }
     }
+
+    private long firstTime = 0;
+
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        if(keyCode == KeyEvent.KEYCODE_BACK)
+        {
+            if(mDrawLayout.isDrawerOpen(mLeftDrawer))
+            {
+                mDrawLayout.closeDrawer(mLeftDrawer);
+                return true;
+            }
+            else
+            {
+                showNote();
+                long secondTime  = System.currentTimeMillis();
+                if(secondTime - firstTime > 2000)
+                {
+                    firstTime = secondTime;
+                    return true;
+                }
+                else
+                {
+                    System.exit(0);
+                }
+            }
+        }
+        return super.onKeyDown(keyCode, event);
+    }
+
+    public static int noteColor = 0xff55409D;
+
+    private void showNote()
+    {
+        Snackbar mSnackbar = Snackbar.make(mDrawLayout, "", Snackbar.LENGTH_SHORT);
+        View view = mSnackbar.getView();
+        Snackbar.SnackbarLayout snackbarLayout = (Snackbar.SnackbarLayout) view;
+        if(view != null)
+        {
+            view.setBackgroundColor(noteColor);
+        }
+        View addView = LayoutInflater.from(MainActivity.this).inflate(R.layout.snack_bar_layout, null);
+        ViewGroup.LayoutParams params = new ViewGroup.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT,
+                ViewGroup.LayoutParams.MATCH_PARENT
+        );
+        snackbarLayout.addView(addView, params);
+        mSnackbar.show();
+    }
+
 }
